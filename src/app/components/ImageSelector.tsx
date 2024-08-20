@@ -9,24 +9,45 @@ type Counts = {
 };
 
 export default function ImageSelector() {
-  const initialValues: Counts = { 1: 10, 2: 100 };
+  const initialValues: Counts = { 1: 10, 2: 100, 3: 200, 4: 500 }; // 200원, 500원 추가
   const [selectedImage, setSelectedImage] = useState<number>(1);
   const [counts, setCounts] = useState<Counts>(initialValues);
   const [totalMoney, setTotalMoney] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [upgrades, setUpgrades] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    false,
-  ]);
+  const [upgrades, setUpgrades] = useState<boolean[]>(Array(12).fill(false));
   const [keyDown, setKeyDown] = useState<{ [key: string]: boolean }>({});
 
-  const upgradeCosts = [100, 500, 1000, 2000];
-  const reductionValues = [2, 4, 8, 16]; // 업그레이드에 따른 숫자 감소값
+  const upgradeCosts = [
+    100,
+    250,
+    500,
+    1000, // 첫 번째 줄
+    3000,
+    5000,
+    10000,
+    15000, // 두 번째 줄
+    30000,
+    50000,
+    70000,
+    100000, // 세 번째 줄
+  ];
+
+  const reductionValues = [
+    2,
+    4,
+    8,
+    16, // 첫 번째 줄
+    32,
+    64,
+    128,
+    256, // 두 번째 줄
+    512,
+    1024,
+    2048,
+    4096, // 세 번째 줄
+  ];
 
   useEffect(() => {
-    // 페이지 로드 시 localStorage에서 저장된 돈과 업그레이드 상태를 불러옴
     const savedMoney = localStorage.getItem('totalMoney');
     const savedUpgrades = localStorage.getItem('upgrades');
 
@@ -45,9 +66,9 @@ export default function ImageSelector() {
       setKeyDown((prev) => ({ ...prev, [event.key]: true }));
 
       if (event.key === 'ArrowLeft') {
-        setSelectedImage(1);
+        setSelectedImage((prev) => (prev === 1 ? 4 : prev - 1)); // 왼쪽으로 이동
       } else if (event.key === 'ArrowRight') {
-        setSelectedImage(2);
+        setSelectedImage((prev) => (prev === 4 ? 1 : prev + 1)); // 오른쪽으로 이동
       } else if (event.key === 'z' || event.key === 'x') {
         const currentReduction = reductionValues.reduce(
           (acc, val, idx) => (upgrades[idx] ? val : acc),
@@ -92,7 +113,6 @@ export default function ImageSelector() {
   }, [selectedImage, totalMoney, upgrades, keyDown]);
 
   const handleUpgradeClick = (index: number) => {
-    // 업그레이드 조건 확인
     if (index > 0 && !upgrades[index - 1]) {
       alert(
         '이 업그레이드를 진행하기 위해서는 이전 업그레이드를 먼저 완료해야 합니다.',
@@ -107,7 +127,6 @@ export default function ImageSelector() {
       newUpgrades[index] = true;
       setUpgrades(newUpgrades);
 
-      // 업그레이드 상태와 총 금액을 localStorage에 저장
       localStorage.setItem('totalMoney', newTotalMoney.toString());
       localStorage.setItem('upgrades', JSON.stringify(newUpgrades));
     } else {
@@ -124,7 +143,7 @@ export default function ImageSelector() {
   };
 
   return (
-    <div className="relative flex justify-center items-center space-x-4">
+    <div className="relative flex flex-col items-center">
       <div className="fixed top-4 right-4 text-2xl font-bold z-50">
         {totalMoney.toLocaleString()}원
         <button
@@ -168,35 +187,67 @@ export default function ImageSelector() {
         </div>
       )}
 
-      <div className="relative flex flex-col items-center">
-        <Image
-          src="/dummy1.png"
-          alt="Dummy 1"
-          width={300}
-          height={300}
-          className={`border-4 ${
-            selectedImage === 1 ? 'border-blue-500' : 'border-transparent'
-          }`}
-        />
-        {selectedImage === 1 && (
-          <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
-        )}
-        <p className="mt-2 text-lg font-semibold">{counts[1]}</p>
-      </div>
-      <div className="relative flex flex-col items-center">
-        <Image
-          src="/dummy2.png"
-          alt="Dummy 2"
-          width={300}
-          height={300}
-          className={`border-4 ${
-            selectedImage === 2 ? 'border-blue-500' : 'border-transparent'
-          }`}
-        />
-        {selectedImage === 2 && (
-          <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
-        )}
-        <p className="mt-2 text-lg font-semibold">{counts[2]}</p>
+      <div className="grid grid-cols-4 gap-4 mt-8">
+        <div className="relative flex flex-col items-center">
+          <Image
+            src="/Dimg1.png"
+            alt="Dummy 1"
+            width={300}
+            height={300}
+            className={`border-4 ${
+              selectedImage === 1 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 1 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[1]}</p>
+        </div>
+        <div className="relative flex flex-col items-center">
+          <Image
+            src="/Dimg2.png"
+            alt="Dummy 2"
+            width={300}
+            height={300}
+            className={`border-4 ${
+              selectedImage === 2 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 2 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[2]}</p>
+        </div>
+        <div className="relative flex flex-col items-center">
+          <Image
+            src="/Dimg3.png"
+            alt="Dummy 3"
+            width={300}
+            height={300}
+            className={`border-4 ${
+              selectedImage === 3 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 3 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[3]}</p>
+        </div>
+        <div className="relative flex flex-col items-center">
+          <Image
+            src="/Dimg4.png"
+            alt="Dummy 4"
+            width={300}
+            height={300}
+            className={`border-4 ${
+              selectedImage === 4 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 4 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[4]}</p>
+        </div>
       </div>
     </div>
   );
