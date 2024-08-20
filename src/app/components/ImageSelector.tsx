@@ -3,31 +3,47 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 
+// Counts 타입 정의
+type Counts = {
+  [key: number]: number;
+};
+
 export default function ImageSelector() {
-  const initialValues = { 1: 10, 2: 100 };
-  const [selectedImage, setSelectedImage] = useState(1);
-  const [counts, setCounts] = useState(initialValues);
+  const initialValues: Counts = { 1: 10, 2: 100 };
+  const [selectedImage, setSelectedImage] = useState<number>(1);
+  const [counts, setCounts] = useState<Counts>(initialValues);
   const [totalMoney, setTotalMoney] = useState<number>(0);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [upgrades, setUpgrades] = useState<boolean[]>([
     false,
     false,
     false,
     false,
   ]);
+  const [keyDown, setKeyDown] = useState<{ [key: string]: boolean }>({});
 
   const upgradeCosts = [100, 500, 1000, 2000];
   const reductionValues = [2, 4, 8, 16]; // 업그레이드에 따른 숫자 감소값
 
   useEffect(() => {
+    // 페이지 로드 시 localStorage에서 저장된 돈과 업그레이드 상태를 불러옴
     const savedMoney = localStorage.getItem('totalMoney');
+    const savedUpgrades = localStorage.getItem('upgrades');
+
     if (savedMoney) {
       setTotalMoney(parseInt(savedMoney, 10));
+    }
+
+    if (savedUpgrades) {
+      setUpgrades(JSON.parse(savedUpgrades));
     }
   }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (keyDown[event.key]) return; // 키가 이미 눌려 있는 상태면 무시
+      setKeyDown((prev) => ({ ...prev, [event.key]: true }));
+
       if (event.key === 'ArrowLeft') {
         setSelectedImage(1);
       } else if (event.key === 'ArrowRight') {
@@ -62,12 +78,18 @@ export default function ImageSelector() {
       }
     };
 
+    const handleKeyUp = (event: KeyboardEvent) => {
+      setKeyDown((prev) => ({ ...prev, [event.key]: false }));
+    };
+
     window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
-  }, [selectedImage, totalMoney, upgrades]);
+  }, [selectedImage, totalMoney, upgrades, keyDown]);
 
   const handleUpgradeClick = (index: number) => {
     // 업그레이드 조건 확인
@@ -79,16 +101,15 @@ export default function ImageSelector() {
     }
 
     if (totalMoney >= upgradeCosts[index]) {
-      setTotalMoney(totalMoney - upgradeCosts[index]);
-      setUpgrades((prev) => {
-        const newUpgrades = [...prev];
-        newUpgrades[index] = true;
-        return newUpgrades;
-      });
-      localStorage.setItem(
-        'totalMoney',
-        (totalMoney - upgradeCosts[index]).toString(),
-      );
+      const newTotalMoney = totalMoney - upgradeCosts[index];
+      setTotalMoney(newTotalMoney);
+      const newUpgrades = [...upgrades];
+      newUpgrades[index] = true;
+      setUpgrades(newUpgrades);
+
+      // 업그레이드 상태와 총 금액을 localStorage에 저장
+      localStorage.setItem('totalMoney', newTotalMoney.toString());
+      localStorage.setItem('upgrades', JSON.stringify(newUpgrades));
     } else {
       alert('업그레이드를 진행할 충분한 돈이 없습니다.');
     }

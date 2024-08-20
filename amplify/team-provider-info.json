@@ -1,0 +1,23 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-uselessmake-dev-72c32-authRole",
+      "UnauthRoleArn": "arn:aws:iam::891377168561:role/amplify-uselessmake-dev-72c32-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::891377168561:role/amplify-uselessmake-dev-72c32-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-uselessmake-dev-72c32-deployment",
+      "UnauthRoleName": "amplify-uselessmake-dev-72c32-unauthRole",
+      "StackName": "amplify-uselessmake-dev-72c32",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:891377168561:stack/amplify-uselessmake-dev-72c32/4e95a4f0-5e96-11ef-a93d-02a6fe96f37b",
+      "AmplifyAppId": "dsa88ksvgkdad"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dsa88ksvgkdad",
+          "type": "manual"
+        }
+      }
+    }
+  }
+}
