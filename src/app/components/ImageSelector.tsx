@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import API from 'aws-amplify';
+import { createRanking } from '../../graphql/mutations';
 
 // Counts 타입 정의
 type Counts = {
@@ -266,6 +268,25 @@ export default function ImageSelector() {
     }
   };
 
+  const saveRanking = async (username: string, score: number) => {
+    try {
+      const result = await API.graphql({
+        query: createRanking,
+        variables: { input: { username, score } },
+      });
+      console.log('Ranking saved:', result);
+    } catch (error) {
+      console.error('Error saving ranking:', error);
+    }
+  };
+
+  const handleSaveRanking = () => {
+    const username = prompt('이름을 입력하세요');
+    if (username) {
+      saveRanking(username, totalMoney); // 현재 소지금액을 점수로 저장
+    }
+  };
+
   const closeUpgradeModal = () => {
     setIsUpgradeModalOpen(false);
   };
@@ -318,6 +339,12 @@ export default function ImageSelector() {
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
             <h2 className="text-2xl font-bold mb-4">순위</h2>
             <p>순위 리스트를 여기에 추가할 예정입니다.</p>
+            <button
+              onClick={handleSaveRanking} // 순위 저장 버튼
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              순위 저장
+            </button>
             <button
               onClick={() => setIsRankingModalOpen(false)}
               className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
