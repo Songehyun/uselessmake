@@ -17,6 +17,9 @@
           "appId": "dsa88ksvgkdad",
           "type": "manual"
         }
+      },
+      "api": {
+        "uselessmake": {}
       }
     }
   }

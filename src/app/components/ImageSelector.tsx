@@ -33,6 +33,7 @@ export default function ImageSelector() {
   const [isAchievementCompleted, setIsAchievementCompleted] =
     useState<boolean>(false);
   const [isRewardClaimed, setIsRewardClaimed] = useState<boolean>(false);
+  const [isRankingModalOpen, setIsRankingModalOpen] = useState<boolean>(false);
 
   const upgradeCosts = [
     100,
@@ -290,6 +291,12 @@ export default function ImageSelector() {
         >
           업적
         </button>
+        <button
+          onClick={() => setIsRankingModalOpen(true)}
+          className="ml-4 mt-2 px-4 py-2 bg-orange-500 text-white rounded-lg"
+        >
+          순위
+        </button>
       </div>
       <div className="fixed top-4 right-4 text-2xl font-bold z-50">
         {totalMoney.toLocaleString()}원
@@ -306,6 +313,21 @@ export default function ImageSelector() {
           상점
         </button>
       </div>
+      {isRankingModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">순위</h2>
+            <p>순위 리스트를 여기에 추가할 예정입니다.</p>
+            <button
+              onClick={() => setIsRankingModalOpen(false)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
+      )}
+
       {isAchievementModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
