@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import API from 'aws-amplify';
+import { API, graphqlOperation } from 'aws-amplify';
 import { createRanking } from '../../graphql/mutations';
 
 // Counts 타입 정의
@@ -270,10 +270,9 @@ export default function ImageSelector() {
 
   const saveRanking = async (username: string, score: number) => {
     try {
-      const result = await API.graphql({
-        query: createRanking,
-        variables: { input: { username, score } },
-      });
+      const result = await API.graphql(
+        graphqlOperation(createRanking, { input: { username, score } }),
+      );
       console.log('Ranking saved:', result);
     } catch (error) {
       console.error('Error saving ranking:', error);

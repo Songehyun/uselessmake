@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-amplify/api": "^6.0.45",
+    "@aws-amplify/api-graphql": "^4.1.14",
     "aws-amplify": "^6.5.1",
     "next": "14.2.5",
     "react": "^18",
