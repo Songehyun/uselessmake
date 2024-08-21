@@ -2,35 +2,32 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/uselessmake/src/API";
+import * as APITypes from "../API";
 type GeneratedQuery<InputType, OutputType> = string & {
   __generatedQueryInput: InputType;
   __generatedQueryOutput: OutputType;
 };
 
-export const getRanking = /* GraphQL */ `query GetRanking($id: ID!) {
-  getRanking(id: $id) {
+export const getTodo = /* GraphQL */ `query GetTodo($id: ID!) {
+  getTodo(id: $id) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
     __typename
   }
 }
-` as GeneratedQuery<
-  APITypes.GetRankingQueryVariables,
-  APITypes.GetRankingQuery
->;
-export const listRankings = /* GraphQL */ `query ListRankings(
-  $filter: ModelRankingFilterInput
+` as GeneratedQuery<APITypes.GetTodoQueryVariables, APITypes.GetTodoQuery>;
+export const listTodos = /* GraphQL */ `query ListTodos(
+  $filter: ModelTodoFilterInput
   $limit: Int
   $nextToken: String
 ) {
-  listRankings(filter: $filter, limit: $limit, nextToken: $nextToken) {
+  listTodos(filter: $filter, limit: $limit, nextToken: $nextToken) {
     items {
       id
-      username
+      name
       score
       createdAt
       updatedAt
@@ -40,7 +37,4 @@ export const listRankings = /* GraphQL */ `query ListRankings(
     __typename
   }
 }
-` as GeneratedQuery<
-  APITypes.ListRankingsQueryVariables,
-  APITypes.ListRankingsQuery
->;
+` as GeneratedQuery<APITypes.ListTodosQueryVariables, APITypes.ListTodosQuery>;

@@ -2,18 +2,18 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateRankingInput = {
+export type CreateTodoInput = {
   id?: string | null,
-  username: string,
-  score: number,
+  name: string,
+  score?: number | null,
 };
 
-export type ModelRankingConditionInput = {
-  username?: ModelStringInput | null,
+export type ModelTodoConditionInput = {
+  name?: ModelStringInput | null,
   score?: ModelIntInput | null,
-  and?: Array< ModelRankingConditionInput | null > | null,
-  or?: Array< ModelRankingConditionInput | null > | null,
-  not?: ModelRankingConditionInput | null,
+  and?: Array< ModelTodoConditionInput | null > | null,
+  or?: Array< ModelTodoConditionInput | null > | null,
+  not?: ModelTodoConditionInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
 };
@@ -70,34 +70,34 @@ export type ModelIntInput = {
   attributeType?: ModelAttributeTypes | null,
 };
 
-export type Ranking = {
-  __typename: "Ranking",
+export type Todo = {
+  __typename: "Todo",
   id: string,
-  username: string,
-  score: number,
+  name: string,
+  score?: number | null,
   createdAt: string,
   updatedAt: string,
 };
 
-export type UpdateRankingInput = {
+export type UpdateTodoInput = {
   id: string,
-  username?: string | null,
+  name?: string | null,
   score?: number | null,
 };
 
-export type DeleteRankingInput = {
+export type DeleteTodoInput = {
   id: string,
 };
 
-export type ModelRankingFilterInput = {
+export type ModelTodoFilterInput = {
   id?: ModelIDInput | null,
-  username?: ModelStringInput | null,
+  name?: ModelStringInput | null,
   score?: ModelIntInput | null,
   createdAt?: ModelStringInput | null,
   updatedAt?: ModelStringInput | null,
-  and?: Array< ModelRankingFilterInput | null > | null,
-  or?: Array< ModelRankingFilterInput | null > | null,
-  not?: ModelRankingFilterInput | null,
+  and?: Array< ModelTodoFilterInput | null > | null,
+  or?: Array< ModelTodoFilterInput | null > | null,
+  not?: ModelTodoFilterInput | null,
 };
 
 export type ModelIDInput = {
@@ -116,20 +116,20 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type ModelRankingConnection = {
-  __typename: "ModelRankingConnection",
-  items:  Array<Ranking | null >,
+export type ModelTodoConnection = {
+  __typename: "ModelTodoConnection",
+  items:  Array<Todo | null >,
   nextToken?: string | null,
 };
 
-export type ModelSubscriptionRankingFilterInput = {
+export type ModelSubscriptionTodoFilterInput = {
   id?: ModelSubscriptionIDInput | null,
-  username?: ModelSubscriptionStringInput | null,
+  name?: ModelSubscriptionStringInput | null,
   score?: ModelSubscriptionIntInput | null,
   createdAt?: ModelSubscriptionStringInput | null,
   updatedAt?: ModelSubscriptionStringInput | null,
-  and?: Array< ModelSubscriptionRankingFilterInput | null > | null,
-  or?: Array< ModelSubscriptionRankingFilterInput | null > | null,
+  and?: Array< ModelSubscriptionTodoFilterInput | null > | null,
+  or?: Array< ModelSubscriptionTodoFilterInput | null > | null,
 };
 
 export type ModelSubscriptionIDInput = {
@@ -174,83 +174,83 @@ export type ModelSubscriptionIntInput = {
   notIn?: Array< number | null > | null,
 };
 
-export type CreateRankingMutationVariables = {
-  input: CreateRankingInput,
-  condition?: ModelRankingConditionInput | null,
+export type CreateTodoMutationVariables = {
+  input: CreateTodoInput,
+  condition?: ModelTodoConditionInput | null,
 };
 
-export type CreateRankingMutation = {
-  createRanking?:  {
-    __typename: "Ranking",
+export type CreateTodoMutation = {
+  createTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type UpdateRankingMutationVariables = {
-  input: UpdateRankingInput,
-  condition?: ModelRankingConditionInput | null,
+export type UpdateTodoMutationVariables = {
+  input: UpdateTodoInput,
+  condition?: ModelTodoConditionInput | null,
 };
 
-export type UpdateRankingMutation = {
-  updateRanking?:  {
-    __typename: "Ranking",
+export type UpdateTodoMutation = {
+  updateTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type DeleteRankingMutationVariables = {
-  input: DeleteRankingInput,
-  condition?: ModelRankingConditionInput | null,
+export type DeleteTodoMutationVariables = {
+  input: DeleteTodoInput,
+  condition?: ModelTodoConditionInput | null,
 };
 
-export type DeleteRankingMutation = {
-  deleteRanking?:  {
-    __typename: "Ranking",
+export type DeleteTodoMutation = {
+  deleteTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type GetRankingQueryVariables = {
+export type GetTodoQueryVariables = {
   id: string,
 };
 
-export type GetRankingQuery = {
-  getRanking?:  {
-    __typename: "Ranking",
+export type GetTodoQuery = {
+  getTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type ListRankingsQueryVariables = {
-  filter?: ModelRankingFilterInput | null,
+export type ListTodosQueryVariables = {
+  filter?: ModelTodoFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListRankingsQuery = {
-  listRankings?:  {
-    __typename: "ModelRankingConnection",
+export type ListTodosQuery = {
+  listTodos?:  {
+    __typename: "ModelTodoConnection",
     items:  Array< {
-      __typename: "Ranking",
+      __typename: "Todo",
       id: string,
-      username: string,
-      score: number,
+      name: string,
+      score?: number | null,
       createdAt: string,
       updatedAt: string,
     } | null >,
@@ -258,46 +258,46 @@ export type ListRankingsQuery = {
   } | null,
 };
 
-export type OnCreateRankingSubscriptionVariables = {
-  filter?: ModelSubscriptionRankingFilterInput | null,
+export type OnCreateTodoSubscriptionVariables = {
+  filter?: ModelSubscriptionTodoFilterInput | null,
 };
 
-export type OnCreateRankingSubscription = {
-  onCreateRanking?:  {
-    __typename: "Ranking",
+export type OnCreateTodoSubscription = {
+  onCreateTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnUpdateRankingSubscriptionVariables = {
-  filter?: ModelSubscriptionRankingFilterInput | null,
+export type OnUpdateTodoSubscriptionVariables = {
+  filter?: ModelSubscriptionTodoFilterInput | null,
 };
 
-export type OnUpdateRankingSubscription = {
-  onUpdateRanking?:  {
-    __typename: "Ranking",
+export type OnUpdateTodoSubscription = {
+  onUpdateTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,
 };
 
-export type OnDeleteRankingSubscriptionVariables = {
-  filter?: ModelSubscriptionRankingFilterInput | null,
+export type OnDeleteTodoSubscriptionVariables = {
+  filter?: ModelSubscriptionTodoFilterInput | null,
 };
 
-export type OnDeleteRankingSubscription = {
-  onDeleteRanking?:  {
-    __typename: "Ranking",
+export type OnDeleteTodoSubscription = {
+  onDeleteTodo?:  {
+    __typename: "Todo",
     id: string,
-    username: string,
-    score: number,
+    name: string,
+    score?: number | null,
     createdAt: string,
     updatedAt: string,
   } | null,

@@ -2,16 +2,16 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/uselessmake/src/API";
+import * as APITypes from "../API";
 type GeneratedSubscription<InputType, OutputType> = string & {
   __generatedSubscriptionInput: InputType;
   __generatedSubscriptionOutput: OutputType;
 };
 
-export const onCreateRanking = /* GraphQL */ `subscription OnCreateRanking($filter: ModelSubscriptionRankingFilterInput) {
-  onCreateRanking(filter: $filter) {
+export const onCreateTodo = /* GraphQL */ `subscription OnCreateTodo($filter: ModelSubscriptionTodoFilterInput) {
+  onCreateTodo(filter: $filter) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -19,13 +19,13 @@ export const onCreateRanking = /* GraphQL */ `subscription OnCreateRanking($filt
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnCreateRankingSubscriptionVariables,
-  APITypes.OnCreateRankingSubscription
+  APITypes.OnCreateTodoSubscriptionVariables,
+  APITypes.OnCreateTodoSubscription
 >;
-export const onUpdateRanking = /* GraphQL */ `subscription OnUpdateRanking($filter: ModelSubscriptionRankingFilterInput) {
-  onUpdateRanking(filter: $filter) {
+export const onUpdateTodo = /* GraphQL */ `subscription OnUpdateTodo($filter: ModelSubscriptionTodoFilterInput) {
+  onUpdateTodo(filter: $filter) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -33,13 +33,13 @@ export const onUpdateRanking = /* GraphQL */ `subscription OnUpdateRanking($filt
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnUpdateRankingSubscriptionVariables,
-  APITypes.OnUpdateRankingSubscription
+  APITypes.OnUpdateTodoSubscriptionVariables,
+  APITypes.OnUpdateTodoSubscription
 >;
-export const onDeleteRanking = /* GraphQL */ `subscription OnDeleteRanking($filter: ModelSubscriptionRankingFilterInput) {
-  onDeleteRanking(filter: $filter) {
+export const onDeleteTodo = /* GraphQL */ `subscription OnDeleteTodo($filter: ModelSubscriptionTodoFilterInput) {
+  onDeleteTodo(filter: $filter) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -47,6 +47,6 @@ export const onDeleteRanking = /* GraphQL */ `subscription OnDeleteRanking($filt
   }
 }
 ` as GeneratedSubscription<
-  APITypes.OnDeleteRankingSubscriptionVariables,
-  APITypes.OnDeleteRankingSubscription
+  APITypes.OnDeleteTodoSubscriptionVariables,
+  APITypes.OnDeleteTodoSubscription
 >;

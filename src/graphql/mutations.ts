@@ -2,19 +2,19 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-import * as APITypes from "../../amplify/backend/api/uselessmake/src/API";
+import * as APITypes from "../API";
 type GeneratedMutation<InputType, OutputType> = string & {
   __generatedMutationInput: InputType;
   __generatedMutationOutput: OutputType;
 };
 
-export const createRanking = /* GraphQL */ `mutation CreateRanking(
-  $input: CreateRankingInput!
-  $condition: ModelRankingConditionInput
+export const createTodo = /* GraphQL */ `mutation CreateTodo(
+  $input: CreateTodoInput!
+  $condition: ModelTodoConditionInput
 ) {
-  createRanking(input: $input, condition: $condition) {
+  createTodo(input: $input, condition: $condition) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -22,16 +22,16 @@ export const createRanking = /* GraphQL */ `mutation CreateRanking(
   }
 }
 ` as GeneratedMutation<
-  APITypes.CreateRankingMutationVariables,
-  APITypes.CreateRankingMutation
+  APITypes.CreateTodoMutationVariables,
+  APITypes.CreateTodoMutation
 >;
-export const updateRanking = /* GraphQL */ `mutation UpdateRanking(
-  $input: UpdateRankingInput!
-  $condition: ModelRankingConditionInput
+export const updateTodo = /* GraphQL */ `mutation UpdateTodo(
+  $input: UpdateTodoInput!
+  $condition: ModelTodoConditionInput
 ) {
-  updateRanking(input: $input, condition: $condition) {
+  updateTodo(input: $input, condition: $condition) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -39,16 +39,16 @@ export const updateRanking = /* GraphQL */ `mutation UpdateRanking(
   }
 }
 ` as GeneratedMutation<
-  APITypes.UpdateRankingMutationVariables,
-  APITypes.UpdateRankingMutation
+  APITypes.UpdateTodoMutationVariables,
+  APITypes.UpdateTodoMutation
 >;
-export const deleteRanking = /* GraphQL */ `mutation DeleteRanking(
-  $input: DeleteRankingInput!
-  $condition: ModelRankingConditionInput
+export const deleteTodo = /* GraphQL */ `mutation DeleteTodo(
+  $input: DeleteTodoInput!
+  $condition: ModelTodoConditionInput
 ) {
-  deleteRanking(input: $input, condition: $condition) {
+  deleteTodo(input: $input, condition: $condition) {
     id
-    username
+    name
     score
     createdAt
     updatedAt
@@ -56,6 +56,6 @@ export const deleteRanking = /* GraphQL */ `mutation DeleteRanking(
   }
 }
 ` as GeneratedMutation<
-  APITypes.DeleteRankingMutationVariables,
-  APITypes.DeleteRankingMutation
+  APITypes.DeleteTodoMutationVariables,
+  APITypes.DeleteTodoMutation
 >;
