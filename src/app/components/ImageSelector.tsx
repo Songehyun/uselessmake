@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { API, graphqlOperation } from 'aws-amplify';
 import { createRanking } from '../../graphql/mutations';
+import { listRankings } from '../../graphql/queries';
 
 // Counts 타입 정의
 type Counts = {
@@ -31,11 +32,24 @@ export default function ImageSelector() {
     useState<boolean>(false);
   const [autoMinerCount, setAutoMinerCount] = useState<number>(0); // 자동채굴기계 수량
   const [premiumMinerCount, setPremiumMinerCount] = useState<number>(0); // 고급자동채굴기계 수량
+  const [rankings, setRankings] = useState<
+    { id: string; username: string; score: number }[]
+  >([]); // 순위 데이터를 저장할 상태
   const [keyDown, setKeyDown] = useState<{ [key: string]: boolean }>({});
   const [isAchievementCompleted, setIsAchievementCompleted] =
     useState<boolean>(false);
   const [isRewardClaimed, setIsRewardClaimed] = useState<boolean>(false);
   const [isRankingModalOpen, setIsRankingModalOpen] = useState<boolean>(false);
+
+  const fetchRankings = async () => {
+    try {
+      const rankingData = await API.graphql(graphqlOperation(listRankings));
+      const rankings = rankingData.data.listRankings.items;
+      setRankings(rankings);
+    } catch (error) {
+      console.error('Error fetching rankings:', error);
+    }
+  };
 
   const upgradeCosts = [
     100,
@@ -199,6 +213,12 @@ export default function ImageSelector() {
     }
   }, [premiumMinerCount]);
 
+  useEffect(() => {
+    if (isRankingModalOpen) {
+      fetchRankings();
+    }
+  }, [isRankingModalOpen]);
+
   const handleUpgradeClick = (index: number) => {
     if (index > 0 && !upgrades[index - 1]) {
       alert(
@@ -338,6 +358,17 @@ export default function ImageSelector() {
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
             <h2 className="text-2xl font-bold mb-4">순위</h2>
             <p>순위 리스트를 여기에 추가할 예정입니다.</p>
+
+            <div className="overflow-y-auto max-h-64">
+              {rankings.map((ranking, index) => (
+                <div key={ranking.id} className="p-2 border-b">
+                  <span className="font-bold">{index + 1}위: </span>
+                  <span>{ranking.username}</span> -{' '}
+                  <span>{ranking.score}원</span>
+                </div>
+              ))}
+            </div>
+
             <button
               onClick={handleSaveRanking} // 순위 저장 버튼
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
