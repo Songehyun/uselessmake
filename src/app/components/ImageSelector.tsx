@@ -1,17 +1,17 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import graphqlOperation from 'aws-amplify';
+import Image from 'next/image';
 import API from 'aws-amplify';
-import { createRanking } from '../../graphql/mutations'; // 경로는 실제 프로젝트 구조에 맞게 수정하세요
-import AchievementModal from './AchievementModal';
-import RankingModal from './RankingModal';
-import UpgradeModal from './UpgradeModal';
-import ShopModal from './ShopModal';
-import ImageGrid from './ImageGrid';
+import { createRanking } from '../../graphql/mutations';
+
+// Counts 타입 정의
+type Counts = {
+  [key: number]: number;
+};
 
 export default function ImageSelector() {
-  const initialValues = {
+  const initialValues: Counts = {
     1: 10,
     2: 100,
     3: 200,
@@ -21,29 +21,51 @@ export default function ImageSelector() {
     7: 5000,
     8: 10000,
   };
-
-  const upgradeCosts = [
-    100, 250, 500, 1000, 3000, 5000, 10000, 15000, 30000, 50000, 70000, 100000,
-  ];
-
-  const reductionValues = [
-    2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
-  ];
-
   const [selectedImage, setSelectedImage] = useState<number>(1);
-  const [counts, setCounts] = useState(initialValues);
+  const [counts, setCounts] = useState<Counts>(initialValues);
   const [totalMoney, setTotalMoney] = useState<number>(0);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState<boolean>(false);
-  const [isShopModalOpen, setIsShopModalOpen] = useState<boolean>(false);
+  const [isShopModalOpen, setIsShopModalOpen] = useState<boolean>(false); // 상점 모달 상태 추가
   const [upgrades, setUpgrades] = useState<boolean[]>(Array(12).fill(false));
   const [isAchievementModalOpen, setIsAchievementModalOpen] =
     useState<boolean>(false);
-  const [autoMinerCount, setAutoMinerCount] = useState<number>(0);
-  const [premiumMinerCount, setPremiumMinerCount] = useState<number>(0);
-  const [isRankingModalOpen, setIsRankingModalOpen] = useState<boolean>(false);
+  const [autoMinerCount, setAutoMinerCount] = useState<number>(0); // 자동채굴기계 수량
+  const [premiumMinerCount, setPremiumMinerCount] = useState<number>(0); // 고급자동채굴기계 수량
+  const [keyDown, setKeyDown] = useState<{ [key: string]: boolean }>({});
   const [isAchievementCompleted, setIsAchievementCompleted] =
     useState<boolean>(false);
   const [isRewardClaimed, setIsRewardClaimed] = useState<boolean>(false);
+  const [isRankingModalOpen, setIsRankingModalOpen] = useState<boolean>(false);
+
+  const upgradeCosts = [
+    100,
+    250,
+    500,
+    1000, // 첫 번째 줄
+    3000,
+    5000,
+    10000,
+    15000, // 두 번째 줄
+    30000,
+    50000,
+    70000,
+    100000, // 세 번째 줄
+  ];
+
+  const reductionValues = [
+    2,
+    4,
+    8,
+    16, // 첫 번째 줄
+    32,
+    64,
+    128,
+    256, // 두 번째 줄
+    512,
+    1024,
+    2048,
+    4096, // 세 번째 줄
+  ];
 
   useEffect(() => {
     const savedAchievementStatus = localStorage.getItem(
@@ -60,6 +82,7 @@ export default function ImageSelector() {
     }
   }, []);
 
+  // 돈이 100,000원을 넘었는지 확인하여 업적 완료 처리
   useEffect(() => {
     if (totalMoney >= 100000 && !isAchievementCompleted) {
       setIsAchievementCompleted(true);
@@ -67,35 +90,114 @@ export default function ImageSelector() {
     }
   }, [totalMoney, isAchievementCompleted]);
 
-  const handleClaimReward = () => {
-    if (isAchievementCompleted && !isRewardClaimed) {
-      setTotalMoney((prevMoney) => {
-        const newTotalMoney = prevMoney + 10000;
-        localStorage.setItem('totalMoney', newTotalMoney.toString());
-        return newTotalMoney;
-      });
-      setIsRewardClaimed(true);
-      localStorage.setItem('isRewardClaimed', 'true');
+  useEffect(() => {
+    const savedMoney = localStorage.getItem('totalMoney');
+    const savedUpgrades = localStorage.getItem('upgrades');
+    const savedAutoMinerCount = localStorage.getItem('autoMinerCount');
+    const savedPremiumMinerCount = localStorage.getItem('premiumMinerCount');
+    if (savedPremiumMinerCount) {
+      setPremiumMinerCount(parseInt(savedPremiumMinerCount, 10));
     }
-  };
 
-  const handleSaveRanking = () => {
-    const username = prompt('이름을 입력하세요');
-    if (username) {
-      saveRanking(username, totalMoney);
+    if (savedMoney) {
+      setTotalMoney(parseInt(savedMoney, 10));
     }
-  };
 
-  const saveRanking = async (username: string, score: number) => {
-    try {
-      const result = await API.graphql(
-        graphqlOperation(createRanking, { input: { username, score } }),
-      );
-      console.log('Ranking saved:', result);
-    } catch (error) {
-      console.error('Error saving ranking:', error);
+    if (savedUpgrades) {
+      setUpgrades(JSON.parse(savedUpgrades));
     }
-  };
+
+    if (savedAutoMinerCount) {
+      setAutoMinerCount(parseInt(savedAutoMinerCount, 10));
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (keyDown[event.key]) return; // 키가 이미 눌려 있는 상태면 무시
+      setKeyDown((prev) => ({ ...prev, [event.key]: true }));
+      if (event.key === 'ArrowUp') {
+        setSelectedImage((prev) => (prev > 4 ? prev - 4 : prev));
+      } else if (event.key === 'ArrowDown') {
+        setSelectedImage((prev) => (prev <= 4 ? prev + 4 : prev));
+      } else if (event.key === 'ArrowLeft') {
+        setSelectedImage((prev) =>
+          prev === 1 || prev === 5 ? prev + 3 : prev - 1,
+        ); // 왼쪽으로 이동
+      } else if (event.key === 'ArrowRight') {
+        setSelectedImage((prev) =>
+          prev === 4 || prev === 8 ? prev - 3 : prev + 1,
+        ); // 오른쪽으로 이동
+      } else if (event.key === 'z' || event.key === 'x') {
+        const currentReduction = reductionValues.reduce(
+          (acc, val, idx) => (upgrades[idx] ? val : acc),
+          1,
+        );
+
+        setCounts((prevCounts) => {
+          const newCount = prevCounts[selectedImage] - currentReduction;
+
+          if (newCount < 0) {
+            const earnedMoney = initialValues[selectedImage];
+            const newTotalMoney = totalMoney + earnedMoney;
+            setTotalMoney(newTotalMoney);
+
+            localStorage.setItem('totalMoney', newTotalMoney.toString());
+
+            return {
+              ...prevCounts,
+              [selectedImage]: initialValues[selectedImage],
+            };
+          } else {
+            return {
+              ...prevCounts,
+              [selectedImage]: newCount,
+            };
+          }
+        });
+      }
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      setKeyDown((prev) => ({ ...prev, [event.key]: false }));
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
+  }, [selectedImage, totalMoney, upgrades, keyDown]);
+
+  useEffect(() => {
+    if (autoMinerCount > 0) {
+      const interval = setInterval(() => {
+        setTotalMoney((prevMoney) => {
+          const newTotalMoney = prevMoney + 10 * autoMinerCount;
+          localStorage.setItem('totalMoney', newTotalMoney.toString());
+          return newTotalMoney;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [autoMinerCount]);
+
+  useEffect(() => {
+    if (premiumMinerCount > 0) {
+      const interval = setInterval(() => {
+        setTotalMoney((prevMoney) => {
+          const newTotalMoney = prevMoney + 150 * premiumMinerCount;
+          localStorage.setItem('totalMoney', newTotalMoney.toString());
+          return newTotalMoney;
+        });
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [premiumMinerCount]);
 
   const handleUpgradeClick = (index: number) => {
     if (index > 0 && !upgrades[index - 1]) {
@@ -116,6 +218,18 @@ export default function ImageSelector() {
       localStorage.setItem('upgrades', JSON.stringify(newUpgrades));
     } else {
       alert('업그레이드를 진행할 충분한 돈이 없습니다.');
+    }
+  };
+
+  const handleClaimReward = () => {
+    if (isAchievementCompleted && !isRewardClaimed) {
+      setTotalMoney((prevMoney) => {
+        const newTotalMoney = prevMoney + 10000;
+        localStorage.setItem('totalMoney', newTotalMoney.toString());
+        return newTotalMoney;
+      });
+      setIsRewardClaimed(true);
+      localStorage.setItem('isRewardClaimed', 'true');
     }
   };
 
@@ -154,6 +268,41 @@ export default function ImageSelector() {
     }
   };
 
+  const saveRanking = async (username: string, score: number) => {
+    try {
+      const result = await API.graphql({
+        query: createRanking,
+        variables: { input: { username, score } },
+      });
+      console.log('Ranking saved:', result);
+    } catch (error) {
+      console.error('Error saving ranking:', error);
+    }
+  };
+
+  const handleSaveRanking = () => {
+    const username = prompt('이름을 입력하세요');
+    if (username) {
+      saveRanking(username, totalMoney); // 현재 소지금액을 점수로 저장
+    }
+  };
+
+  const closeUpgradeModal = () => {
+    setIsUpgradeModalOpen(false);
+  };
+
+  const openUpgradeModal = () => {
+    setIsUpgradeModalOpen(true);
+  };
+
+  const closeShopModal = () => {
+    setIsShopModalOpen(false);
+  };
+
+  const openShopModal = () => {
+    setIsShopModalOpen(true);
+  };
+
   return (
     <div className="relative flex flex-col items-center">
       <div className="fixed top-4 left-4 text-2xl font-bold z-50">
@@ -173,58 +322,299 @@ export default function ImageSelector() {
       <div className="fixed top-4 right-4 text-2xl font-bold z-50">
         {totalMoney.toLocaleString()}원
         <button
-          onClick={() => setIsUpgradeModalOpen(true)}
+          onClick={openUpgradeModal}
           className="ml-4 mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
         >
           업그레이드
         </button>
         <button
-          onClick={() => setIsShopModalOpen(true)}
+          onClick={openShopModal}
           className="ml-4 mt-2 px-4 py-2 bg-green-500 text-white rounded-lg"
         >
           상점
         </button>
       </div>
-
-      {isAchievementModalOpen && (
-        <AchievementModal
-          isAchievementCompleted={isAchievementCompleted}
-          isRewardClaimed={isRewardClaimed}
-          handleClaimReward={handleClaimReward}
-          closeModal={() => setIsAchievementModalOpen(false)}
-        />
+      {isRankingModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">순위</h2>
+            <p>순위 리스트를 여기에 추가할 예정입니다.</p>
+            <button
+              onClick={handleSaveRanking} // 순위 저장 버튼
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
+            >
+              순위 저장
+            </button>
+            <button
+              onClick={() => setIsRankingModalOpen(false)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
       )}
 
-      {isRankingModalOpen && (
-        <RankingModal
-          handleSaveRanking={handleSaveRanking}
-          closeModal={() => setIsRankingModalOpen(false)}
-        />
+      {isAchievementModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">업적</h2>
+            <div className="grid grid-cols-1 gap-4">
+              <div className="p-4 border rounded-lg">
+                <h3 className="text-xl font-semibold">소지액 100,000원 달성</h3>
+                <p className="text-sm">보상 : 10,000 원</p>
+                {isAchievementCompleted ? (
+                  isRewardClaimed ? (
+                    <button
+                      className="mt-2 px-4 py-2 bg-gray-500 text-white rounded-lg"
+                      disabled
+                    >
+                      완료
+                    </button>
+                  ) : (
+                    <button
+                      onClick={handleClaimReward}
+                      className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    >
+                      수령
+                    </button>
+                  )
+                ) : (
+                  <button
+                    className="mt-2 px-4 py-2 bg-gray-300 text-black rounded-lg"
+                    disabled
+                  >
+                    진행 중
+                  </button>
+                )}
+              </div>
+            </div>
+            <button
+              onClick={() => setIsAchievementModalOpen(false)}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
       )}
 
       {isUpgradeModalOpen && (
-        <UpgradeModal
-          upgrades={upgrades}
-          upgradeCosts={upgradeCosts}
-          reductionValues={reductionValues}
-          handleUpgradeClick={handleUpgradeClick}
-          closeModal={() => setIsUpgradeModalOpen(false)}
-        />
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">업그레이드</h2>
+            <div className="grid grid-cols-4 gap-4">
+              {upgradeCosts.map((cost, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleUpgradeClick(index)}
+                  className={`px-4 py-2 rounded-lg ${
+                    upgrades[index]
+                      ? 'bg-green-500 text-white'
+                      : 'bg-gray-300 text-black'
+                  }`}
+                  disabled={upgrades[index]}
+                >
+                  {index + 1}번째 업그레이드
+                  <br />
+                  비용: {cost}원<br />
+                  감소량: {reductionValues[index]}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={closeUpgradeModal}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
       )}
 
       {isShopModalOpen && (
-        <ShopModal
-          handleBuyAutoMiner={handleBuyAutoMiner}
-          handleBuyPremiumMiner={handleBuyPremiumMiner}
-          closeModal={() => setIsShopModalOpen(false)}
-        />
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">상점</h2>
+            <div className="grid grid-cols-4 gap-4">
+              <button
+                onClick={handleBuyAutoMiner}
+                className="px-4 py-2 rounded-lg bg-yellow-500 text-white"
+              >
+                자동채굴기계
+                <br />
+                비용: 10000원
+                <br />
+                매초 10원 추가
+              </button>
+
+              <button
+                onClick={handleBuyPremiumMiner}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white"
+              >
+                고급자동채굴기계
+                <br />
+                비용: 100000원
+                <br />
+                매초 150원 추가
+              </button>
+            </div>
+            <button
+              onClick={closeShopModal}
+              className="mt-4 px-4 py-2 bg-gray-500 text-white rounded-lg"
+            >
+              닫기
+            </button>
+          </div>
+        </div>
       )}
 
-      <ImageGrid
-        selectedImage={selectedImage}
-        counts={counts}
-        setSelectedImage={setSelectedImage}
-      />
+      <div className="grid grid-cols-4 gap-4 mt-8">
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px', marginBottom: '20px' }}
+        >
+          <Image
+            src="/img/Dimg1.jpg"
+            alt="Dummy 1"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 1 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 1 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[1]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px', marginBottom: '20px' }}
+        >
+          <Image
+            src="/img/Dimg2.jpg"
+            alt="Dummy 2"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 2 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 2 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[2]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px', marginBottom: '20px' }}
+        >
+          <Image
+            src="/img/Dimg3.jpg"
+            alt="Dummy 3"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 3 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 3 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[3]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px', marginBottom: '20px' }}
+        >
+          <Image
+            src="/img/Dimg4.jpg"
+            alt="Dummy 4"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 4 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 4 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[4]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px' }}
+        >
+          <Image
+            src="/img/Dimg5.jpg"
+            alt="Dummy 5"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 5 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 5 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[5]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px' }}
+        >
+          <Image
+            src="/img/Dimg6.jpg"
+            alt="Dummy 6"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 6 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 6 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[6]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px' }}
+        >
+          <Image
+            src="/img/Dimg7.jpg"
+            alt="Dummy 7"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 7 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 7 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[7]}</p>
+        </div>
+        <div
+          className="relative flex flex-col items-center"
+          style={{ width: '300px', height: '250px' }}
+        >
+          <Image
+            src="/img/Dimg8.jpg"
+            alt="Dummy 8"
+            width={300}
+            height={250}
+            className={`object-cover w-full h-full ${
+              selectedImage === 8 ? 'border-blue-500' : 'border-transparent'
+            }`}
+          />
+          {selectedImage === 8 && (
+            <div className="absolute inset-0 border-4 border-blue-500 pointer-events-none"></div>
+          )}
+          <p className="mt-2 text-lg font-semibold">{counts[8]}</p>
+        </div>
+      </div>
     </div>
   );
 }
