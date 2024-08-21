@@ -1,0 +1,12 @@
+{
+  "resourceName": "Rankingstable",
+  "tableName": "Rankingstable",
+  "partitionKey": {
+    "fieldName": "name",
+    "fieldType": "string"
+  },
+  "gsi": [],
+  "triggerFunctions": [
+    "RankingstableTrigger2c08cd53"
+  ]
+}

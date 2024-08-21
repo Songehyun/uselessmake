@@ -16,5 +16,43 @@
         "uselessmake": {}
       }
     }
+  },
+  "songdev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-uselessmake-songdev-d4418-authRole",
+      "UnauthRoleArn": "arn:aws:iam::891377168561:role/amplify-uselessmake-songdev-d4418-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::891377168561:role/amplify-uselessmake-songdev-d4418-authRole",
+      "Region": "ap-northeast-2",
+      "DeploymentBucketName": "amplify-uselessmake-songdev-d4418-deployment",
+      "UnauthRoleName": "amplify-uselessmake-songdev-d4418-unauthRole",
+      "StackName": "amplify-uselessmake-songdev-d4418",
+      "StackId": "arn:aws:cloudformation:ap-northeast-2:891377168561:stack/amplify-uselessmake-songdev-d4418/a27ef270-5f6c-11ef-9df3-0aab6e237219",
+      "AmplifyAppId": "dkbuowvk7kftb"
+    },
+    "categories": {
+      "hosting": {
+        "amplifyhosting": {
+          "appId": "dkbuowvk7kftb",
+          "type": "manual"
+        }
+      },
+      "api": {
+        "uselessmake": {},
+        "api1009e509": {}
+      },
+      "function": {
+        "uselessmake7ca2579b": {
+          "deploymentBucketName": "amplify-uselessmake-songdev-d4418-deployment",
+          "s3Key": "amplify-builds/uselessmake7ca2579b-354b616e532f4c704b52-build.zip"
+        },
+        "RankingstableTrigger2c08cd53": {
+          "deploymentBucketName": "amplify-uselessmake-songdev-d4418-deployment",
+          "s3Key": "amplify-builds/RankingstableTrigger2c08cd53-71326c30517332594971-build.zip"
+        }
+      },
+      "storage": {
+        "Rankingstable": {}
+      }
+    }
   }
 }

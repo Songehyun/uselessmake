@@ -2,12 +2,17 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import API from 'aws-amplify';
-import { createRanking } from '../../graphql/mutations';
+import axios from 'axios';
 
 // Counts 타입 정의
 type Counts = {
   [key: number]: number;
+};
+
+type Ranking = {
+  id: string;
+  name: string;
+  totalmoney: number;
 };
 
 export default function ImageSelector() {
@@ -21,50 +26,52 @@ export default function ImageSelector() {
     7: 5000,
     8: 10000,
   };
+
   const [selectedImage, setSelectedImage] = useState<number>(1);
   const [counts, setCounts] = useState<Counts>(initialValues);
   const [totalMoney, setTotalMoney] = useState<number>(0);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState<boolean>(false);
-  const [isShopModalOpen, setIsShopModalOpen] = useState<boolean>(false); // 상점 모달 상태 추가
+  const [isShopModalOpen, setIsShopModalOpen] = useState<boolean>(false);
   const [upgrades, setUpgrades] = useState<boolean[]>(Array(12).fill(false));
   const [isAchievementModalOpen, setIsAchievementModalOpen] =
     useState<boolean>(false);
-  const [autoMinerCount, setAutoMinerCount] = useState<number>(0); // 자동채굴기계 수량
-  const [premiumMinerCount, setPremiumMinerCount] = useState<number>(0); // 고급자동채굴기계 수량
+  const [autoMinerCount, setAutoMinerCount] = useState<number>(0);
+  const [premiumMinerCount, setPremiumMinerCount] = useState<number>(0);
+  const [rankings, setRankings] = useState<Ranking[]>([]);
   const [keyDown, setKeyDown] = useState<{ [key: string]: boolean }>({});
   const [isAchievementCompleted, setIsAchievementCompleted] =
     useState<boolean>(false);
   const [isRewardClaimed, setIsRewardClaimed] = useState<boolean>(false);
   const [isRankingModalOpen, setIsRankingModalOpen] = useState<boolean>(false);
 
+  useEffect(() => {
+    const fetchRankings = async () => {
+      try {
+        const response = await axios.get(
+          'https://nu15ecgl35.execute-api.ap-northeast-2.amazonaws.com/songdev/items',
+        );
+        const rankings = response.data.map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          totalmoney: item.totalmoney,
+        }));
+        setRankings(rankings);
+      } catch (error) {
+        console.error('Error fetching rankings:', error);
+      }
+    };
+
+    if (isRankingModalOpen) {
+      fetchRankings();
+    }
+  }, [isRankingModalOpen]);
+
   const upgradeCosts = [
-    100,
-    250,
-    500,
-    1000, // 첫 번째 줄
-    3000,
-    5000,
-    10000,
-    15000, // 두 번째 줄
-    30000,
-    50000,
-    70000,
-    100000, // 세 번째 줄
+    100, 250, 500, 1000, 3000, 5000, 10000, 15000, 30000, 50000, 70000, 100000,
   ];
 
   const reductionValues = [
-    2,
-    4,
-    8,
-    16, // 첫 번째 줄
-    32,
-    64,
-    128,
-    256, // 두 번째 줄
-    512,
-    1024,
-    2048,
-    4096, // 세 번째 줄
+    2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096,
   ];
 
   useEffect(() => {
@@ -82,7 +89,6 @@ export default function ImageSelector() {
     }
   }, []);
 
-  // 돈이 100,000원을 넘었는지 확인하여 업적 완료 처리
   useEffect(() => {
     if (totalMoney >= 100000 && !isAchievementCompleted) {
       setIsAchievementCompleted(true);
@@ -114,7 +120,7 @@ export default function ImageSelector() {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (keyDown[event.key]) return; // 키가 이미 눌려 있는 상태면 무시
+      if (keyDown[event.key]) return;
       setKeyDown((prev) => ({ ...prev, [event.key]: true }));
       if (event.key === 'ArrowUp') {
         setSelectedImage((prev) => (prev > 4 ? prev - 4 : prev));
@@ -123,11 +129,11 @@ export default function ImageSelector() {
       } else if (event.key === 'ArrowLeft') {
         setSelectedImage((prev) =>
           prev === 1 || prev === 5 ? prev + 3 : prev - 1,
-        ); // 왼쪽으로 이동
+        );
       } else if (event.key === 'ArrowRight') {
         setSelectedImage((prev) =>
           prev === 4 || prev === 8 ? prev - 3 : prev + 1,
-        ); // 오른쪽으로 이동
+        );
       } else if (event.key === 'z' || event.key === 'x') {
         const currentReduction = reductionValues.reduce(
           (acc, val, idx) => (upgrades[idx] ? val : acc),
@@ -221,16 +227,43 @@ export default function ImageSelector() {
     }
   };
 
-  const handleClaimReward = () => {
-    if (isAchievementCompleted && !isRewardClaimed) {
-      setTotalMoney((prevMoney) => {
-        const newTotalMoney = prevMoney + 10000;
-        localStorage.setItem('totalMoney', newTotalMoney.toString());
-        return newTotalMoney;
-      });
-      setIsRewardClaimed(true);
-      localStorage.setItem('isRewardClaimed', 'true');
+  // 순위 저장 로직
+  const saveRanking = async (username: string, score: number) => {
+    try {
+      await axios.post(
+        'https://nu15ecgl35.execute-api.ap-northeast-2.amazonaws.com/songdev/items',
+        {
+          name: username, // username을 name으로 매핑
+          totalmoney: score, // score를 totalmoney로 매핑
+        },
+      );
+      console.log('Ranking saved successfully');
+    } catch (error) {
+      console.error('Error saving ranking:', error);
     }
+  };
+
+  const handleSaveRanking = () => {
+    const username = prompt('이름을 입력하세요');
+    if (username) {
+      saveRanking(username, totalMoney);
+    }
+  };
+
+  const closeUpgradeModal = () => {
+    setIsUpgradeModalOpen(false);
+  };
+
+  const openUpgradeModal = () => {
+    setIsUpgradeModalOpen(true);
+  };
+
+  const closeShopModal = () => {
+    setIsShopModalOpen(false);
+  };
+
+  const openShopModal = () => {
+    setIsShopModalOpen(true);
   };
 
   const handleBuyAutoMiner = () => {
@@ -268,39 +301,18 @@ export default function ImageSelector() {
     }
   };
 
-  const saveRanking = async (username: string, score: number) => {
-    try {
-      const result = await API.graphql({
-        query: createRanking,
-        variables: { input: { username, score } },
-      });
-      console.log('Ranking saved:', result);
-    } catch (error) {
-      console.error('Error saving ranking:', error);
+  const handleClaimReward = () => {
+    if (isAchievementCompleted && !isRewardClaimed) {
+      const rewardAmount = 10000;
+      const newTotalMoney = totalMoney + rewardAmount;
+      setTotalMoney(newTotalMoney);
+      setIsRewardClaimed(true);
+
+      localStorage.setItem('totalMoney', newTotalMoney.toString());
+      localStorage.setItem('isRewardClaimed', 'true');
+    } else {
+      alert('이미 보상을 수령했거나 업적을 달성하지 않았습니다.');
     }
-  };
-
-  const handleSaveRanking = () => {
-    const username = prompt('이름을 입력하세요');
-    if (username) {
-      saveRanking(username, totalMoney); // 현재 소지금액을 점수로 저장
-    }
-  };
-
-  const closeUpgradeModal = () => {
-    setIsUpgradeModalOpen(false);
-  };
-
-  const openUpgradeModal = () => {
-    setIsUpgradeModalOpen(true);
-  };
-
-  const closeShopModal = () => {
-    setIsShopModalOpen(false);
-  };
-
-  const openShopModal = () => {
-    setIsShopModalOpen(true);
   };
 
   return (
@@ -334,11 +346,23 @@ export default function ImageSelector() {
           상점
         </button>
       </div>
+
       {isRankingModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-8 rounded-lg shadow-lg text-center">
             <h2 className="text-2xl font-bold mb-4">순위</h2>
             <p>순위 리스트를 여기에 추가할 예정입니다.</p>
+
+            <div className="overflow-y-auto max-h-64">
+              {rankings.map((ranking, index) => (
+                <div key={ranking.id} className="p-2 border-b">
+                  <span className="font-bold">{index + 1}위: </span>
+                  <span>{ranking.name}</span> -{' '}
+                  <span>{ranking.totalmoney}원</span>
+                </div>
+              ))}
+            </div>
+
             <button
               onClick={handleSaveRanking} // 순위 저장 버튼
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
