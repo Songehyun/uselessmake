@@ -43,7 +43,21 @@
         }
       },
       "api": {
-        "uselessmake": {}
+        "uselessmake": {},
+        "api1009e509": {}
+      },
+      "function": {
+        "uselessmake7ca2579b": {
+          "deploymentBucketName": "amplify-uselessmake-songdev-d4418-deployment",
+          "s3Key": "amplify-builds/uselessmake7ca2579b-354b616e532f4c704b52-build.zip"
+        },
+        "RankingstableTrigger2c08cd53": {
+          "deploymentBucketName": "amplify-uselessmake-songdev-d4418-deployment",
+          "s3Key": "amplify-builds/RankingstableTrigger2c08cd53-796c6375556533746f75-build.zip"
+        }
+      },
+      "storage": {
+        "Rankingstable": {}
       }
     }
   }

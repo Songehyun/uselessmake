@@ -1,5 +1,19 @@
 {
   "api": {
+    "api1009e509": {
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "function",
+          "resourceName": "uselessmake7ca2579b"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "API Gateway"
+    },
     "uselessmake": {
       "dependsOn": [],
       "output": {
@@ -17,6 +31,43 @@
       "service": "AppSync"
     }
   },
+  "function": {
+    "RankingstableTrigger2c08cd53": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributes": [
+            "Name",
+            "Arn",
+            "StreamArn"
+          ],
+          "category": "storage",
+          "resourceName": "Rankingstable"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
+    "uselessmake7ca2579b": {
+      "build": true,
+      "dependsOn": [
+        {
+          "attributeEnvMap": {
+            "Arn": "TABLE_ARN",
+            "Name": "TABLE_NAME"
+          },
+          "attributes": [
+            "Name",
+            "Arn"
+          ],
+          "category": "storage",
+          "resourceName": "Rankingstable"
+        }
+      ],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    }
+  },
   "hosting": {
     "amplifyhosting": {
       "providerPlugin": "awscloudformation",
@@ -25,6 +76,38 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_RankingstableTrigger2c08cd53_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "RankingstableTrigger2c08cd53"
+        }
+      ]
+    },
+    "AMPLIFY_function_RankingstableTrigger2c08cd53_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "RankingstableTrigger2c08cd53"
+        }
+      ]
+    },
+    "AMPLIFY_function_uselessmake7ca2579b_deploymentBucketName": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "uselessmake7ca2579b"
+        }
+      ]
+    },
+    "AMPLIFY_function_uselessmake7ca2579b_s3Key": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "uselessmake7ca2579b"
+        }
+      ]
+    },
     "AMPLIFY_hosting_amplifyhosting_appId": {
       "usedBy": [
         {
@@ -40,6 +123,12 @@
           "resourceName": "amplifyhosting"
         }
       ]
+    }
+  },
+  "storage": {
+    "Rankingstable": {
+      "providerPlugin": "awscloudformation",
+      "service": "DynamoDB"
     }
   }
 }
